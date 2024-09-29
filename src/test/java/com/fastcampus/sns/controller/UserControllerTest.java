@@ -42,7 +42,7 @@ class UserControllerTest {
 
 
     @Test
-    @DisplayName("회원가입 정상케이스")
+    @DisplayName("회원가입 정상 케이스")
     public void test_userRegister() throws Exception {
         String username = "id";
         String password = "pw";
@@ -74,7 +74,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("로그인 정상케이스")
+    @DisplayName("로그인 정상 케이스")
     public void test_userLogin() throws Exception {
         String username = "hcho302";
         String password = "qwerty";

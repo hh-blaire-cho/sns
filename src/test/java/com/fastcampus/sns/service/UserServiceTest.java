@@ -49,7 +49,7 @@ class UserServiceTest {
 
 
     @Test
-    @DisplayName("로그인 정상케이스")
+    @DisplayName("로그인 정상 케이스")
     void test_userLogin() {
         String username = "id";
         String password = "pw";
