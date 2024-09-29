@@ -24,6 +24,10 @@ logging:
     com.example.sns: debug
     org.springframework.web.servlet: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace
+jwt:
+  secret-key: fast-campus.sns_secret_key-for-tokenization
+  token:
+    expired-time-ms: 2592000000
 
 springdoc:
   packages-to-scan: com.example.sns.controller

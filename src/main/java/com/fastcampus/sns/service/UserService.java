@@ -5,8 +5,10 @@ import com.fastcampus.sns.entity.UserEntity;
 import com.fastcampus.sns.exception.ErrorCode;
 import com.fastcampus.sns.exception.SnsAppException;
 import com.fastcampus.sns.repository.UserRepository;
+import com.fastcampus.sns.util.JwtTokenUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,13 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
+
+    @Value("${jwt.secret-key}")
+    private String secretKey;
+
+    @Value("${jwt.token.expired-time-ms}")
+    private Long expiredTimeMs;
+
 
     // 회원가입
     @Transactional // 예외가 발생을 하면 롤백이 됨
@@ -40,7 +49,7 @@ public class UserService {
             throw new SnsAppException(ErrorCode.INVALID_PASSWORD);
         }
 
-        // 토큰 생성
-        return "token";
+        // 토큰 생성 후 반환
+        return JwtTokenUtils.generateAccessToken(username, secretKey, expiredTimeMs);
     }
 }
