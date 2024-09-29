@@ -29,8 +29,8 @@ public class UserController {
 
     @PostMapping("/login")
     public ApiResponse<UserLoginResponse> login(@RequestBody UserLoginRequest request) {
-        UserDto dto = userService.login(request.getUsername(), request.getPassword());
-        return ApiResponse.success(UserLoginResponse.fromDto(dto)); // 성공했을 때의 결과
+        String token = userService.login(request.getUsername(), request.getPassword());
+        return ApiResponse.success(new UserLoginResponse(token)); // 성공했을 때의 결과
     }
 
 }

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootTest
 class UserServiceTest {
@@ -24,14 +25,19 @@ class UserServiceTest {
     @MockBean
     UserRepository userEntityRepository;
 
+    @MockBean
+    private BCryptPasswordEncoder encoder;
+
     @Test
     @DisplayName("회원가입 정상 케이스")
     void test_userRegister() {
         String username = "id";
         String password = "pw";
+        String encryptedPassword = "pwpw";
         UserEntity fixture = UserEntityFixture.get(username, password);
 
         when(userEntityRepository.findByUsername(username)).thenReturn(Optional.empty());
+        when(encoder.encode(password)).thenReturn(encryptedPassword);
         when(userEntityRepository.save(any())).thenReturn(fixture);
         Assertions.assertDoesNotThrow(() -> userService.register(username, password));
     }
@@ -41,9 +47,11 @@ class UserServiceTest {
     void test_userRegister_withDuplicateName() {
         String username = "id";
         String password = "pw";
+        String encryptedPassword = "pwpw";
         UserEntity fixture = UserEntityFixture.get(username, password);
 
         when(userEntityRepository.findByUsername(username)).thenReturn(Optional.of(fixture));
+        when(encoder.encode(password)).thenReturn(encryptedPassword);
         Assertions.assertThrows(SnsAppException.class, () -> userService.register(username, password));
     }
 
@@ -55,6 +63,7 @@ class UserServiceTest {
         String password = "pw";
         UserEntity fixture = UserEntityFixture.get(username, password);
         when(userEntityRepository.findByUsername(username)).thenReturn(Optional.of(fixture));
+        when(encoder.matches(password, fixture.getPassword())).thenReturn(true);
         Assertions.assertDoesNotThrow(() -> userService.login(username, password));
     }
 

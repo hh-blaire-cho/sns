@@ -79,7 +79,7 @@ class UserControllerTest {
         String username = "hcho302";
         String password = "qwerty";
         UserLoginRequest userLoginRequest = new UserLoginRequest(username, password);
-        when(userService.login(username, password)).thenReturn(mock(UserDto.class));
+        when(userService.login(username, password)).thenReturn("token");
 
         mockMvc.perform(post(apiHeader + "/login")
                 .contentType(MediaType.APPLICATION_JSON)
