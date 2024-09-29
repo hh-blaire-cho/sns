@@ -2,6 +2,23 @@ debug: false
 management.endpoints.web.exposure.include: "*"
 server.servlet.session.timeout: 54000
 
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/snsdb
+    driver-class-name: org.postgresql.Driver
+    username: snsuser
+    password: 1234567
+  jpa:
+    defer-datasource-initialization: true
+    hibernate.ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+        show_sql: true
+        format_sql: true
+  h2.console.enabled: true
+
 logging:
   level:
     com.example.sns: debug
