@@ -1,0 +1,20 @@
+debug: false
+management.endpoints.web.exposure.include: "*"
+server.servlet.session.timeout: 54000
+
+logging:
+  level:
+    com.example.sns: debug
+    org.springframework.web.servlet: debug
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+
+springdoc:
+  packages-to-scan: com.example.sns.controller
+  swagger-ui:
+    path: /api-docs
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /api-docs/json
+    groups:
+      enabled: true
