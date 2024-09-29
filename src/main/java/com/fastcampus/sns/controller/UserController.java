@@ -1,8 +1,10 @@
 package com.fastcampus.sns.controller;
 
 import com.fastcampus.sns.dto.UserDto;
+import com.fastcampus.sns.dto.request.UserLoginRequest;
 import com.fastcampus.sns.dto.request.UserRegisterRequest;
 import com.fastcampus.sns.dto.response.ApiResponse;
+import com.fastcampus.sns.dto.response.UserLoginResponse;
 import com.fastcampus.sns.dto.response.UserRegisterResponse;
 import com.fastcampus.sns.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,4 +25,12 @@ public class UserController {
         UserDto dto = userService.register(request.getUsername(), request.getPassword());
         return ApiResponse.success(UserRegisterResponse.fromDto(dto)); // 성공했을 때의 결과
     }
+
+
+    @PostMapping("/login")
+    public ApiResponse<UserLoginResponse> login(@RequestBody UserLoginRequest request) {
+        UserDto dto = userService.login(request.getUsername(), request.getPassword());
+        return ApiResponse.success(UserLoginResponse.fromDto(dto)); // 성공했을 때의 결과
+    }
+
 }

@@ -47,4 +47,34 @@ class UserServiceTest {
         Assertions.assertThrows(SnsAppException.class, () -> userService.register(username, password));
     }
 
+
+    @Test
+    @DisplayName("로그인 정상 케이스")
+    void test_userLogin() {
+        String username = "id";
+        String password = "pw";
+        UserEntity fixture = UserEntityFixture.get(username, password);
+        when(userEntityRepository.findByUsername(username)).thenReturn(Optional.of(fixture));
+        Assertions.assertDoesNotThrow(() -> userService.login(username, password));
+    }
+
+    @Test
+    @DisplayName("로그인시 가입이 안된 아이디 입력")
+    void test_userLogin_wrongId() {
+        String username = "id";
+        String password = "pw";
+        when(userEntityRepository.findByUsername(username)).thenReturn(Optional.empty());
+        Assertions.assertThrows(SnsAppException.class, () -> userService.login(username, password));
+    }
+
+    @Test
+    @DisplayName("로그인시 비밀번호 틀림")
+    void test_userLogin_wrongPassword() {
+        String username = "id";
+        String password = "pw";
+        String wrongPassword = "pw...";
+        UserEntity fixture = UserEntityFixture.get(username, password);
+        when(userEntityRepository.findByUsername(username)).thenReturn(Optional.of(fixture));
+        Assertions.assertThrows(SnsAppException.class, () -> userService.login(username, wrongPassword));
+    }
 }
