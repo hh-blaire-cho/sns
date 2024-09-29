@@ -1,13 +1,21 @@
 package com.fastcampus.sns.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import java.sql.Timestamp;
+import java.time.Instant;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SQLDelete;
-
-import java.sql.Timestamp;
-import java.time.Instant;
 
 @Setter
 @Getter
@@ -24,7 +32,7 @@ public class UserEntity {
     @Column(nullable = false, unique = true, length = 15)
     private String username;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 60) // BCrypt 해시는 일반적으로 60자
     private String password;
 
     private String nickname;
