@@ -5,6 +5,7 @@ import com.fastcampus.sns.entity.UserEntity;
 import com.fastcampus.sns.exception.ErrorCode;
 import com.fastcampus.sns.exception.SnsAppException;
 import com.fastcampus.sns.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ public class UserService {
     private final BCryptPasswordEncoder encoder;
 
     // 회원가입
+    @Transactional // 예외가 발생을 하면 롤백이 됨
     public UserDto register(String username, String password) {
         // 해당 유저네임으로 이미 가입한 이력이 있는지 확인
         userRepository.findByUsername(username).ifPresent(x -> {
