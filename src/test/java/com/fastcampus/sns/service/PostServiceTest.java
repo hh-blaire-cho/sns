@@ -35,24 +35,24 @@ class PostServiceTest {
 
     @Test
     @DisplayName("게시글 작성 정상 케이스")
-    void test_createPost() {
+    void test_createPostPost() {
         String title = "randomTitle";
         String content = "randomContent";
         String username = "randomUsername";
         when(userRepo.findByUsername(username)).thenReturn(Optional.of(mock(UserEntity.class)));
         when(postRepo.save(any(PostEntity.class))).thenReturn(mock(PostEntity.class));
-        Assertions.assertDoesNotThrow(() -> sut.create(title, content, username));
+        Assertions.assertDoesNotThrow(() -> sut.createPost(title, content, username));
 
     }
 
     @Test
     @DisplayName("게시글 작성시 유저가 존재하지 않으면 에러")
-    void test_createPost_withoutValidUser() {
+    void test_createPost_withoutUser() {
         String title = "randomTitle";
         String content = "randomContent";
         String username = "randomUsername";
         when(userRepo.findByUsername(username)).thenReturn(Optional.empty());
-        SnsAppException e = assertThrows(SnsAppException.class, () -> sut.create(title, content, username));
+        SnsAppException e = assertThrows(SnsAppException.class, () -> sut.createPost(title, content, username));
         Assertions.assertEquals(ErrorCode.USER_NOT_FOUND, e.getErrorCode());
 
     }
