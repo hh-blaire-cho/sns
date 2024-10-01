@@ -21,7 +21,7 @@ import org.hibernate.annotations.SQLDelete;
 @Getter
 @Entity
 @Table(name = "\"user\"")
-@SQLDelete(sql = "UPDATE \"user\" SET deleated = NOW() WHERE id=?")
+@SQLDelete(sql = "UPDATE \"user\" SET deleted = NOW() WHERE id=?")
 @Filter(name = "deletedFilter", condition = "deleted_at is NULL")
 public class UserEntity {
 
@@ -35,8 +35,6 @@ public class UserEntity {
     @Column(nullable = false, length = 60) // BCrypt 해시는 일반적으로 60자
     private String password;
 
-    private String nickname;
-
     @Enumerated(EnumType.STRING)
     private UserRole role = UserRole.USER;
 
@@ -48,7 +46,6 @@ public class UserEntity {
 
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
-
 
     @PrePersist
     void createdAt() {

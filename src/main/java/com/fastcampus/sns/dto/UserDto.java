@@ -3,11 +3,10 @@ package com.fastcampus.sns.dto;
 import com.fastcampus.sns.entity.UserEntity;
 import com.fastcampus.sns.entity.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.sql.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.sql.Timestamp;
 
 @Data
 @AllArgsConstructor
@@ -18,7 +17,6 @@ public class UserDto {
     private Long id;
     private String username;
     private String password;
-    private String nickname;
     private UserRole role;
     private Timestamp createdAt;
     private Timestamp updatedAt;
@@ -30,7 +28,6 @@ public class UserDto {
             entity.getId(),
             entity.getUsername(),
             entity.getPassword(),
-            entity.getNickname(),
             entity.getRole(),
             entity.getCreatedAt(),
             entity.getUpdatedAt(),
@@ -39,4 +36,3 @@ public class UserDto {
     }
 
 }
-
