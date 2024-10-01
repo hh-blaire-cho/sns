@@ -4,7 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fastcampus.sns.dto.request.PostCreateRequest;
+import com.fastcampus.sns.dto.request.PostRequest;
 import com.fastcampus.sns.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -44,7 +44,7 @@ class PostControllerTest {
         String content = "randomContent";
         mockMvc.perform(post(apiHeader)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new PostCreateRequest(title, content)))
+                .content(objectMapper.writeValueAsBytes(new PostRequest(title, content)))
             )
             .andDo(print())
             .andExpect(status().isOk());
@@ -59,7 +59,7 @@ class PostControllerTest {
         String content = "randomContent";
         mockMvc.perform(post(apiHeader)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(new PostCreateRequest(title, content)))
+                .content(objectMapper.writeValueAsBytes(new PostRequest(title, content)))
             )
             .andDo(print())
             .andExpect(status().isUnauthorized());

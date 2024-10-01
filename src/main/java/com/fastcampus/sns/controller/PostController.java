@@ -1,6 +1,6 @@
 package com.fastcampus.sns.controller;
 
-import com.fastcampus.sns.dto.request.PostCreateRequest;
+import com.fastcampus.sns.dto.request.PostRequest;
 import com.fastcampus.sns.dto.response.ApiResponse;
 import com.fastcampus.sns.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public ApiResponse<Void> create(@RequestBody PostCreateRequest request, Authentication authentication) {
+    public ApiResponse<Void> create(@RequestBody PostRequest request, Authentication authentication) {
         String username = authentication.getName();
         postService.createPost(request.getTitle(), request.getContent(), authentication.getName());
         return ApiResponse.success(null);
