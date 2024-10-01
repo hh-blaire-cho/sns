@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+@DisplayName("뷰 컨트롤러 - 유저")
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(GlobalControllerAdvice.class)
