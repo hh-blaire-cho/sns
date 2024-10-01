@@ -1,10 +1,15 @@
 package com.fastcampus.sns.controller;
 
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fastcampus.sns.dto.request.PostRequest;
+import com.fastcampus.sns.exception.ErrorCode;
+import com.fastcampus.sns.exception.SnsAppException;
 import com.fastcampus.sns.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -61,6 +66,51 @@ class PostControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsBytes(new PostRequest(title, content)))
             )
+            .andDo(print())
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(username = "testUser", roles = {"USER"}) // Mock 사용자 추가
+    @DisplayName("게시글 수정 정상 케이스")
+    void test_updatePost() throws Exception {
+        // given
+        String title = "randomTitle";
+        String content = "randomContent";
+        mockMvc.perform(put(apiHeader + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(new PostRequest(title, content)))
+            )
+            .andDo(print())
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "testUser", roles = {"USER"}) // Mock 사용자 추가
+    @DisplayName("게시글 수정시 게시글이 없으면 에러")
+    void test_updatePost_withoutPost() throws Exception {
+        // given
+        String title = "randomTitle";
+        String content = "randomContent";
+        doThrow(new SnsAppException(ErrorCode.POST_NOT_FOUND)).when(postService)
+            .updatePost(eq(1L), eq(title), eq(content), eq("testUser"));
+        mockMvc.perform(put(apiHeader + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(new PostRequest(title, content))))
+            .andDo(print())
+            .andExpect(status().is(ErrorCode.POST_NOT_FOUND.getStatus().value()));
+    }
+
+    @Test
+    @WithAnonymousUser // 로그인하지 않은 경우를 말함
+    @DisplayName("게시글 수정시 유저가 없으면 에러")
+    void test_updatePost_withoutUser() throws Exception {
+        // given
+        String title = "randomTitle";
+        String content = "randomContent";
+        mockMvc.perform(put(apiHeader + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(new PostRequest(title, content))))
             .andDo(print())
             .andExpect(status().isUnauthorized());
     }
