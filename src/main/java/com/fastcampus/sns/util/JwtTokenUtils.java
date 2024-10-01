@@ -22,6 +22,23 @@ public class JwtTokenUtils {
             .compact();
     }
 
+    public static boolean isExpired(String token, String key) {
+        Date expiredDate = extractClaims(token, key).getExpiration();
+        return expiredDate.before(new Date());
+    }
+
+    public static String getUsername(String token, String key) {
+        return extractClaims(token, key).get("username", String.class);
+    }
+
+    private static Claims extractClaims(String token, String key) {
+        return Jwts.parserBuilder()
+            .setSigningKey(getKey(key))
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
+    }
+
 
     // 비밀키 생성
     private static Key getKey(String key) {

@@ -2,41 +2,40 @@ package com.fastcampus.sns.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.time.Instant;
 import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SQLDelete;
 
-@Setter
 @Getter
 @Entity
-@Table(name = "\"user\"")
-@SQLDelete(sql = "UPDATE \"user\" SET deleted_at = NOW() WHERE id=?")
+@Table(name = "post")
+@SQLDelete(sql = "UPDATE \"post\" SET deleted_at = NOW() WHERE id=?")
 @Filter(name = "deletedFilter", condition = "deleted_at is NULL")
-public class UserEntity {
+public class PostEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id = null;
 
-    @Column(nullable = false, unique = true, length = 15)
-    private String username;
+    @Column(nullable = false)
+    private String title;
 
-    @Column(nullable = false, length = 60) // BCrypt 해시는 일반적으로 60자
-    private String password;
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String content;
 
-    @Enumerated(EnumType.STRING)
-    private UserRole role = UserRole.USER;
+    @ManyToOne
+    @JoinColumn(name = "username", referencedColumnName = "username")
+    private UserEntity userEntity;
 
     @Column(name = "created_at")
     private Timestamp createdAt;
@@ -57,10 +56,12 @@ public class UserEntity {
         this.updatedAt = Timestamp.from(Instant.now());
     }
 
-    public static UserEntity of(String username, String password) {
-        UserEntity entity = new UserEntity();
-        entity.setUsername(username);
-        entity.setPassword(password);
-        return entity;
+    public static PostEntity of(String title, String content, UserEntity userEntity) {
+        PostEntity postEntity = new PostEntity();
+        postEntity.title = title;
+        postEntity.content = content;
+        postEntity.userEntity = userEntity;
+        return postEntity;
     }
+
 }

@@ -52,4 +52,11 @@ public class UserService {
         // 토큰 생성 후 반환
         return JwtTokenUtils.generateAccessToken(username, secretKey, expiredTimeMs);
     }
+
+    public UserDto loadUserDtoByUsername(String username) {
+        return userRepository.findByUsername(username).map(UserDto::fromEntity)
+            .orElseThrow(() ->
+                new SnsAppException(ErrorCode.USER_NOT_FOUND, String.format("%s not found", username)));
+    }
+
 }

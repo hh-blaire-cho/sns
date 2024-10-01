@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+@DisplayName("비즈니스 로직 - 유저")
 @SpringBootTest
 class UserServiceTest {
 
