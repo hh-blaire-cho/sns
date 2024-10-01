@@ -18,7 +18,7 @@ import org.hibernate.annotations.SQLDelete;
 
 @Getter
 @Entity
-@Table(name = "\"post\"")
+@Table(name = "post")
 @SQLDelete(sql = "UPDATE \"post\" SET deleted_at = NOW() WHERE id=?")
 @Filter(name = "deletedFilter", condition = "deleted_at is NULL")
 public class PostEntity {
@@ -34,7 +34,7 @@ public class PostEntity {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "username")
+    @JoinColumn(name = "username", referencedColumnName = "username")
     private UserEntity userEntity;
 
     @Column(name = "created_at")
