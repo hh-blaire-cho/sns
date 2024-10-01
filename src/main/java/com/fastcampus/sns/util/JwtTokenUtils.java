@@ -22,6 +22,11 @@ public class JwtTokenUtils {
             .compact();
     }
 
+    public static boolean isExpired(String token, String key) {
+        Date expiredDate = extractClaims(token, key).getExpiration();
+        return expiredDate.before(new Date());
+    }
+
     public static String getUsername(String token, String key) {
         return extractClaims(token, key).get("username", String.class);
     }

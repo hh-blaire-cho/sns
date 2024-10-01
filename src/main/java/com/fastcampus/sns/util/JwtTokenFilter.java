@@ -35,7 +35,12 @@ public class JwtTokenFilter extends OncePerRequestFilter { // 매 요청때마�
         // 헤더에서 토큰 파싱하기
         try {
             final String token = header.split(" ")[1].trim(); //Bearer 뒤에 스페이스 있음 고려
-            // TODO check if token is valid (check expiration)
+            // 토큰이 만료되지 않았는지 확인
+            if (JwtTokenUtils.isExpired(token, key)) {
+                log.error("Key is expired");
+                filterChain.doFilter(request, response);
+                return;
+            }
 
             // 토큰을 사용하여 유저 정보를 가져온뒤에, 실제 존재하는 지 검증함.
             String username = JwtTokenUtils.getUsername(token, key);
