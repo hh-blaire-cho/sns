@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.fastcampus.sns.entity.UserEntity;
+import com.fastcampus.sns.exception.ErrorCode;
 import com.fastcampus.sns.exception.SnsAppException;
 import com.fastcampus.sns.fixture.UserEntityFixture;
 import com.fastcampus.sns.repository.UserRepository;
@@ -52,7 +53,9 @@ class UserServiceTest {
 
         when(userEntityRepository.findByUsername(username)).thenReturn(Optional.of(fixture));
         when(encoder.encode(password)).thenReturn(encryptedPassword);
-        Assertions.assertThrows(SnsAppException.class, () -> userService.register(username, password));
+        SnsAppException e = Assertions.assertThrows(SnsAppException.class, () ->
+            userService.register(username, password));
+        Assertions.assertEquals(ErrorCode.DUPLICATED_USER_NAME, e.getErrorCode());
     }
 
 
@@ -73,7 +76,9 @@ class UserServiceTest {
         String username = "id";
         String password = "pw";
         when(userEntityRepository.findByUsername(username)).thenReturn(Optional.empty());
-        Assertions.assertThrows(SnsAppException.class, () -> userService.login(username, password));
+        SnsAppException e = Assertions.assertThrows(SnsAppException.class, () ->
+            userService.login(username, password));
+        Assertions.assertEquals(ErrorCode.USER_NOT_FOUND, e.getErrorCode());
     }
 
     @Test
@@ -84,6 +89,8 @@ class UserServiceTest {
         String wrongPassword = "pw...";
         UserEntity fixture = UserEntityFixture.get(username, password);
         when(userEntityRepository.findByUsername(username)).thenReturn(Optional.of(fixture));
-        Assertions.assertThrows(SnsAppException.class, () -> userService.login(username, wrongPassword));
+        SnsAppException e = Assertions.assertThrows(SnsAppException.class, () ->
+            userService.login(username, password));
+        Assertions.assertEquals(ErrorCode.INVALID_PASSWORD, e.getErrorCode());
     }
 }
