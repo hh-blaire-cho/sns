@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.time.Instant;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SQLDelete;
 
@@ -27,9 +28,11 @@ public class PostEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id = null;
 
+    @Setter
     @Column(nullable = false)
     private String title;
 
+    @Setter
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
@@ -46,6 +49,14 @@ public class PostEntity {
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
 
+    public static PostEntity of(String title, String content, UserEntity userEntity) {
+        PostEntity postEntity = new PostEntity();
+        postEntity.title = title;
+        postEntity.content = content;
+        postEntity.userEntity = userEntity;
+        return postEntity;
+    }
+
     @PrePersist
     void createdAt() {
         this.createdAt = Timestamp.from(Instant.now());
@@ -54,14 +65,6 @@ public class PostEntity {
     @PreUpdate
     void updatedAt() {
         this.updatedAt = Timestamp.from(Instant.now());
-    }
-
-    public static PostEntity of(String title, String content, UserEntity userEntity) {
-        PostEntity postEntity = new PostEntity();
-        postEntity.title = title;
-        postEntity.content = content;
-        postEntity.userEntity = userEntity;
-        return postEntity;
     }
 
 }

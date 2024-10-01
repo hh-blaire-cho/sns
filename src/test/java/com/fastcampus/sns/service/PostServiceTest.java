@@ -1,7 +1,10 @@
 package com.fastcampus.sns.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -12,7 +15,7 @@ import com.fastcampus.sns.exception.SnsAppException;
 import com.fastcampus.sns.repository.PostRepository;
 import com.fastcampus.sns.repository.UserRepository;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +44,7 @@ class PostServiceTest {
         String username = "randomUsername";
         when(userRepo.findByUsername(username)).thenReturn(Optional.of(mock(UserEntity.class)));
         when(postRepo.save(any(PostEntity.class))).thenReturn(mock(PostEntity.class));
-        Assertions.assertDoesNotThrow(() -> sut.createPost(title, content, username));
+        assertDoesNotThrow(() -> sut.createPost(title, content, username));
 
     }
 
@@ -53,7 +56,48 @@ class PostServiceTest {
         String username = "randomUsername";
         when(userRepo.findByUsername(username)).thenReturn(Optional.empty());
         SnsAppException e = assertThrows(SnsAppException.class, () -> sut.createPost(title, content, username));
-        Assertions.assertEquals(ErrorCode.USER_NOT_FOUND, e.getErrorCode());
+        assertEquals(ErrorCode.USER_NOT_FOUND, e.getErrorCode());
 
     }
+
+    @Test
+    @DisplayName("게시글 수정 정상 케이스")
+    void test_updatePost() {
+        Long postId = 1L;
+        String username = "hcho302";
+        String title = "randomTitle";
+        String content = "randomContent";
+        when(postRepo.findById(postId)).thenReturn(Optional.of(mock(PostEntity.class)));
+        when(userRepo.findByUsername(username)).thenReturn(Optional.of(mock(UserEntity.class)));
+        assertDoesNotThrow(() -> sut.updatePost(postId, title, content, username));
+        then(postRepo).should().save(any(PostEntity.class));
+    }
+
+    @Test
+    @DisplayName("게시글 수정시 게시글이 없으면 에러")
+    void test_updatePost_withoutPost() {
+        Long postId = 1L;
+        String username = "hcho302";
+        String title = "randomTitle";
+        String content = "randomContent";
+        when(postRepo.findById(postId)).thenReturn(Optional.empty());
+        SnsAppException e = assertThrows(SnsAppException.class, () ->
+            sut.updatePost(postId, title, content, username));
+        assertEquals(ErrorCode.POST_NOT_FOUND, e.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("게시글 수정시 유저가 없으면 에러")
+    void test_updatePost_withoutUser() {
+        Long postId = 1L;
+        String username = "hcho302";
+        String title = "randomTitle";
+        String content = "randomContent";
+        when(postRepo.findById(postId)).thenReturn(Optional.of(mock(PostEntity.class)));
+        when(userRepo.findByUsername(username)).thenReturn(Optional.empty());
+        SnsAppException e = assertThrows(SnsAppException.class, () ->
+            sut.updatePost(postId, title, content, username));
+        assertEquals(ErrorCode.USER_NOT_FOUND, e.getErrorCode());
+    }
+
 }
