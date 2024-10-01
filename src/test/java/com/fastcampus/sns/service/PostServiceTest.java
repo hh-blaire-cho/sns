@@ -65,10 +65,12 @@ class PostServiceTest {
     void test_updatePost() {
         Long postId = 1L;
         String username = "hcho302";
-        String title = "randomTitle";
-        String content = "randomContent";
-        when(postRepo.findById(postId)).thenReturn(Optional.of(mock(PostEntity.class)));
-        when(userRepo.findByUsername(username)).thenReturn(Optional.of(mock(UserEntity.class)));
+        String title = "updated";
+        String content = "updated";
+        UserEntity userEntity = new UserEntity();
+        PostEntity postEntity = PostEntity.of("title0", "cont0", userEntity);
+        when(postRepo.findById(postId)).thenReturn(Optional.of(postEntity));
+        when(userRepo.findByUsername(username)).thenReturn(Optional.of(userEntity));
         assertDoesNotThrow(() -> sut.updatePost(postId, title, content, username));
         then(postRepo).should().save(any(PostEntity.class));
     }
@@ -78,8 +80,8 @@ class PostServiceTest {
     void test_updatePost_withoutPost() {
         Long postId = 1L;
         String username = "hcho302";
-        String title = "randomTitle";
-        String content = "randomContent";
+        String title = "updated";
+        String content = "updated";
         when(postRepo.findById(postId)).thenReturn(Optional.empty());
         SnsAppException e = assertThrows(SnsAppException.class, () ->
             sut.updatePost(postId, title, content, username));
@@ -91,13 +93,30 @@ class PostServiceTest {
     void test_updatePost_withoutUser() {
         Long postId = 1L;
         String username = "hcho302";
-        String title = "randomTitle";
-        String content = "randomContent";
+        String title = "updated";
+        String content = "updated";
         when(postRepo.findById(postId)).thenReturn(Optional.of(mock(PostEntity.class)));
         when(userRepo.findByUsername(username)).thenReturn(Optional.empty());
         SnsAppException e = assertThrows(SnsAppException.class, () ->
             sut.updatePost(postId, title, content, username));
         assertEquals(ErrorCode.USER_NOT_FOUND, e.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("게시글 수정시 유저와 작성자가 다르면 에러")
+    void test_updatePost_userNotEqualToWriter() {
+        Long postId = 1L;
+        String username = "hcho302";
+        String title = "updated";
+        String content = "updated";
+        UserEntity userEntity1 = new UserEntity();
+        UserEntity userEntity2 = new UserEntity();
+        PostEntity postEntity = PostEntity.of("title0", "cont0", userEntity1);
+        when(postRepo.findById(postId)).thenReturn(Optional.of(postEntity));
+        when(userRepo.findByUsername(username)).thenReturn(Optional.of(userEntity2));
+        SnsAppException e = assertThrows(SnsAppException.class, () ->
+            sut.updatePost(postId, title, content, username));
+        assertEquals(ErrorCode.INVALID_PERMISSION, e.getErrorCode());
     }
 
 }

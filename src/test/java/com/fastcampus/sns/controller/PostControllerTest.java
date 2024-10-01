@@ -1,17 +1,24 @@
 package com.fastcampus.sns.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fastcampus.sns.dto.request.PostRequest;
+import com.fastcampus.sns.entity.PostEntity;
+import com.fastcampus.sns.entity.UserEntity;
 import com.fastcampus.sns.exception.ErrorCode;
 import com.fastcampus.sns.exception.SnsAppException;
 import com.fastcampus.sns.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,5 +120,21 @@ class PostControllerTest {
                 .content(objectMapper.writeValueAsBytes(new PostRequest(title, content))))
             .andDo(print())
             .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("게시글 수정시 유저와 작성자가 다르면 에러")
+    void test_updatePost_userNotEqualToWriter() throws Exception {
+        // given
+        String title = "randomTitle";
+        String content = "randomContent";
+        doThrow(new SnsAppException(ErrorCode.INVALID_PERMISSION)).when(postService)
+            .updatePost(eq(1L), eq(title), eq(content), any());
+        mockMvc.perform(put(apiHeader + "/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(new PostRequest(title, content))))
+            .andDo(print())
+            .andExpect(status().is(ErrorCode.INVALID_PERMISSION.getStatus().value()));
     }
 }
