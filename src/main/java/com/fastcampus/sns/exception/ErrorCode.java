@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
+    INTERNAL_SEVERE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error"),
     DUPLICATED_USER_NAME(HttpStatus.CONFLICT, "Duplicated username"),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User not found"),
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "Invalid password");
