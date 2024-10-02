@@ -21,7 +21,7 @@ import org.hibernate.annotations.Where;
 @Setter
 @Getter
 @Entity
-@Table(name = "like")
+@Table(name = "\"like\"")
 @SQLDelete(sql = "UPDATE \"like\" SET deleted_at = NOW() WHERE id=?")
 @Where(clause = "deleted_at is NULL")
 @NoArgsConstructor
