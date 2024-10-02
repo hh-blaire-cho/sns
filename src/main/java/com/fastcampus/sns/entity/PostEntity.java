@@ -1,5 +1,6 @@
 package com.fastcampus.sns.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,11 +8,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Filter;
@@ -39,6 +44,10 @@ public class PostEntity {
     @ManyToOne
     @JoinColumn(name = "username", referencedColumnName = "username")
     private UserEntity userEntity;
+
+    @OrderBy("createdAt DESC")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private final Set<LikeEntity> likes = new LinkedHashSet<>();
 
     @Column(name = "created_at")
     private Timestamp createdAt;
